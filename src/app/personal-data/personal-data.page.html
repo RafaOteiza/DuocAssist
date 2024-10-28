@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio"></ion-back-button> <!-- Botón para volver -->
+    </ion-buttons>
+    <ion-title>Datos Personales</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (submit)="guardarDatosPersonales()">
+    <ion-list>
+      <ion-item>
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input [(ngModel)]="nombre" name="nombre" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Apellido</ion-label>
+        <ion-input [(ngModel)]="apellido" name="apellido" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Correo</ion-label>
+        <ion-input [(ngModel)]="correo" name="correo" required type="email" disabled></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input [(ngModel)]="telefono" name="telefono" required type="tel"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Sexo</ion-label>
+        <ion-select [(ngModel)]="sexo" name="sexo" required>
+          <ion-select-option value="masculino">Masculino</ion-select-option>
+          <ion-select-option value="femenino">Femenino</ion-select-option>
+          <ion-select-option value="otro">Otro</ion-select-option>
+          <ion-select-option value="no-decidir">Prefiero no decir</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Carrera</ion-label>
+        <ion-input [(ngModel)]="carrera" name="carrera" required></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" type="submit">Guardar Datos</ion-button>
+    <ion-button expand="block" color="light" (click)="volverAlMenu()">Volver sin guardar</ion-button> <!-- Botón para volver sin guardar -->
+  </form>
+</ion-content>

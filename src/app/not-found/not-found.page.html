@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-text color="light">Duoc</ion-text>
+      <ion-text color="warning">Assist</ion-text>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="not-found-content">
+  <div class="not-found-container">
+    <img src="../assets/images/error-404.png" alt="Error 404" class="error-image" />
+    <h2>Error 404</h2>
+    <p>Lo sentimos, la página que buscas no existe.</p>
+    <ion-button expand="full" [routerLink]="['/inicio']" class="back-home-button">
+      Ir al Inicio
+    </ion-button>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small" text-center>
+      © 2024 DuocAssist. Todos los derechos reservados.
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>
