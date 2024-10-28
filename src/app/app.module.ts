@@ -16,6 +16,9 @@ import { environment } from '../environments/environment';  // Asegúrate de que
 // Importa tu servicio de autenticación
 import { AuthService } from './services/auth.service';
 
+// Importa HttpClientModule
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -23,6 +26,7 @@ import { AuthService } from './services/auth.service';
     IonicModule.forRoot(),
     AppRoutingModule,
     ReactiveFormsModule,
+    HttpClientModule, // Añadir HttpClientModule aquí
     // Inicialización de Firebase
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule,
