@@ -56,13 +56,30 @@
     </ion-card-header>
   </ion-card>
 
+  <!-- Tarjeta de Clima Actual -->
+  <ion-card class="item-bordered">
+    <ion-card-header>
+      <ion-card-title class="custom-title">Clima Actual</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="temperature !== null">
+        <p>Temperatura Actual: {{ temperature }} °C</p>
+        <p>Calidad del Aire: {{ airQuality }}</p>
+        <p>Día: {{ nombreDia }}</p>
+      </div>
+      <div *ngIf="temperature === null">
+        <p>Cargando clima...</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
   <ion-card class="item-bordered">
     <ion-card-header>
       <ion-card-title class="custom-title">Tus clases de hoy</ion-card-title>
     </ion-card-header>
-    <ion-card-content >
+    <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let clase of clasesHoy" >
+        <ion-item *ngFor="let clase of clasesHoy">
           <ion-label>
             <h2>{{ clase.titulo }}</h2>
             <p><strong>Fecha:</strong> {{ clase.fecha }}</p>
