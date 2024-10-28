@@ -29,7 +29,12 @@ export class InicioPage implements OnInit {
   }
 
   ngOnInit() {
-    // Obtener la fecha actual y el nombre del día
+    this.updateDate();
+    this.loadPersonalData();
+    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
+  }
+
+  updateDate() {
     const hoy = new Date();
     this.fechaHoy = hoy.toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -37,23 +42,20 @@ export class InicioPage implements OnInit {
       day: 'numeric'
     });
     this.nombreDia = hoy.toLocaleDateString('es-ES', { weekday: 'long' });
+  }
 
-    // Verificar si los datos personales están en localStorage
+  loadPersonalData() {
     const datosPersonales = JSON.parse(localStorage.getItem('datosPersonales') || '{}');
     if (datosPersonales && datosPersonales.nombre) {
       this.nombreUsuario = datosPersonales.nombre;
       this.apellidoUsuario = datosPersonales.apellido || '';
     } else {
-      // Obtener el nombre de usuario a partir del correo
       this.afAuth.authState.subscribe(user => {
         if (user && user.email) {
           this.nombreUsuario = user.email.split('@')[0];
         }
       });
     }
-
-    // Obtener los datos de clima y calidad del aire
-    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
   }
 
   // Método para obtener el clima y la calidad del aire
@@ -104,7 +106,6 @@ export class InicioPage implements OnInit {
   ];
 
   cerrarSesion() {
-    // Cerrar sesión en Firebase
     this.afAuth.signOut().then(() => {
       localStorage.removeItem('ingresado');
       localStorage.removeItem('datosPersonales');
@@ -112,5 +113,15 @@ export class InicioPage implements OnInit {
     }).catch((error) => {
       console.error('Error al cerrar sesión: ', error);
     });
+  }
+
+  doRefresh(event: any) {
+    this.updateDate();
+    this.loadPersonalData();
+    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
+
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000); // Tiempo de espera para la animación de refresco
   }
 }
