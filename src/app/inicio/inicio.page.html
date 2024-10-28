@@ -48,7 +48,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content id="main-content" [fullscreen]="true">
+<ion-content id="main-content" [fullscreen]="true" class="not-found-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline" pullingText="Desliza hacia abajo para refrescar" refreshingSpinner="crescent" refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
+
   <ion-card>
     <ion-card-header>
       <ion-card-title class="custom-title">Bienvenido {{ nombreUsuario }} {{ apellidoUsuario }}</ion-card-title>
