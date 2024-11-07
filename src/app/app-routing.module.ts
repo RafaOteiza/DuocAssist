@@ -25,8 +25,8 @@ const routes: Routes = [
     canActivate: [IngresadoGuard]
   },
   {
-    path: 'welcome',
-    loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule),
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
     canActivate: [NoIngresadoGuard]
   },
   {
@@ -50,7 +50,8 @@ const routes: Routes = [
   {
     path: 'personal-data',
     loadChildren: () => import('./personal-data/personal-data.module').then( m => m.PersonalDataPageModule)
-  },  {
+  },
+  {
     path: 'not-found',
     loadChildren: () => import('./not-found/not-found.module').then( m => m.NotFoundPageModule)
   },

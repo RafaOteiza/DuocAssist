@@ -22,22 +22,20 @@ export class AuthService {
           const datosPersonales = localStorage.getItem('datosPersonales');
           
           if (!datosPersonales) {
-            // Si no hay datos personales, redirigir a la página de datos personales
             this.router.navigate(['/personal-data']);
           } else {
-            // Si ya tiene datos personales, redirigir a la página de inicio
             this.router.navigate(['/inicio']);
           }
         }
       })
       .catch((error) => {
-        console.error('Error al registrar:', error); // Manejo de errores
+        console.error('Error al registrar:', error);
         throw error;
       });
   }
 
-  // Método para iniciar sesión
-  login(email: string, password: string) {
+  // Método para iniciar sesión con manejo de errores personalizado
+  login(email: string, password: string): Promise<void | string> {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const uid = userCredential.user?.uid;
@@ -49,29 +47,42 @@ export class AuthService {
           const datosPersonales = localStorage.getItem('datosPersonales');
           
           if (!datosPersonales) {
-            // Si no hay datos personales, redirigir a la página de datos personales
             this.router.navigate(['/personal-data']);
           } else {
-            // Si ya tiene datos personales, redirigir a la página de inicio
             this.router.navigate(['/inicio']);
           }
         }
       })
       .catch((error) => {
-        console.error('Error al iniciar sesión:', error); // Manejo de errores
-        throw error;
+        // Personalización de mensajes de error
+        let errorMessage = '';
+
+        switch (error.code) {
+          case 'auth/invalid-credential':
+            errorMessage = 'Las credenciales ingresadas son inválidas. Por favor, verifica tu correo y contraseña.';
+            break;
+          case 'auth/user-not-found':
+            errorMessage = 'No se encontró una cuenta con este correo. Regístrate si aún no tienes una cuenta.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'La contraseña es incorrecta. Inténtalo de nuevo.';
+            break;
+          default:
+            errorMessage = 'Ocurrió un error al iniciar sesión. Inténtalo más tarde.';
+        }
+
+        console.error('Error al iniciar sesión:', errorMessage);
+        return Promise.reject(errorMessage); // Retorna el mensaje de error personalizado
       });
   }
 
   // Método para cerrar sesión
   logout() {
-    // Eliminar el token de usuario y los datos personales de localStorage
     localStorage.removeItem('userToken');
     localStorage.removeItem('datosPersonales');
     
     return this.afAuth.signOut()
       .then(() => {
-        // Redirigir a la página de login
         this.router.navigate(['/login']);
       });
   }
@@ -79,5 +90,5 @@ export class AuthService {
   // Método para obtener el estado de autenticación del usuario
   getAuthState() {
     return this.afAuth.authState;
-  }
+  }
 }

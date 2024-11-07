@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { PhotosService } from '../photos.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { WeatherService } from '../services/weather.service'; // Importa el servicio del clima
+import { WeatherService } from '../services/weather.service';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-inicio',
@@ -16,14 +17,15 @@ export class InicioPage implements OnInit {
   fechaHoy!: string;
   nombreDia!: string;
   photos: string[] = [];
-  temperature: number | null = null; // Variable para almacenar la temperatura en Celsius
-  airQuality: string = ''; // Variable para almacenar la calidad del aire
+  temperature: number | null = null;
+  airQuality: string = '';
 
   constructor(
     public navCtrl: NavController,
     private photoService: PhotosService,
-    private afAuth: AngularFireAuth, // Servicio de Firebase Auth
-    private weatherService: WeatherService // Servicio del clima
+    private afAuth: AngularFireAuth,
+    private weatherService: WeatherService,
+    private alertController: AlertController // Para mostrar alertas
   ) {
     this.photos = this.photoService.photos;
   }
@@ -31,7 +33,7 @@ export class InicioPage implements OnInit {
   ngOnInit() {
     this.updateDate();
     this.loadPersonalData();
-    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
+    this.getWeatherAndAirQuality('Santiago');
   }
 
   updateDate() {
@@ -58,12 +60,10 @@ export class InicioPage implements OnInit {
     }
   }
 
-  // Método para obtener el clima y la calidad del aire
   getWeatherAndAirQuality(city: string) {
     this.weatherService.getWeather(city).subscribe(weatherData => {
       this.temperature = weatherData.main.temp;
 
-      // Obtener la calidad del aire usando las coordenadas del clima
       const { lat, lon } = weatherData.coord;
       this.weatherService.getAirQuality(lat, lon).subscribe(airData => {
         const aqi = airData.list[0].main.aqi;
@@ -74,7 +74,6 @@ export class InicioPage implements OnInit {
     });
   }
 
-  // Método para interpretar el AQI (Air Quality Index)
   getAirQualityDescription(aqi: number): string {
     switch (aqi) {
       case 1: return 'Buena';
@@ -88,6 +87,31 @@ export class InicioPage implements OnInit {
 
   async takePhoto() {
     await this.photoService.addNewPhoto();
+  }
+
+  async startScan() {
+    await BarcodeScanner.checkPermission({ force: true });
+
+    BarcodeScanner.hideBackground(); // Hace la pantalla transparente durante el escaneo
+
+    const result = await BarcodeScanner.startScan();
+    if (result.hasContent) {
+      this.showAlert(result.content);
+    }
+  }
+
+  async showAlert(content: string) {
+    const alert = await this.alertController.create({
+      header: 'Contenido del QR',
+      message: content,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  stopScan() {
+    BarcodeScanner.stopScan();
   }
 
   clasesHoy = [
@@ -118,10 +142,10 @@ export class InicioPage implements OnInit {
   doRefresh(event: any) {
     this.updateDate();
     this.loadPersonalData();
-    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
+    this.getWeatherAndAirQuality('Santiago');
 
     setTimeout(() => {
       event.target.complete();
-    }, 1000); // Tiempo de espera para la animación de refresco
+    }, 1000);
   }
 }
