@@ -1,9 +1,12 @@
+// src/app/inicio/inicio.page.ts
 import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController } from '@ionic/angular';
 import { PhotosService } from '../photos.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { WeatherService } from '../services/weather.service';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { AsignaturaService } from '../services/asignatura.service';
+import { Asignatura } from '../models/asignatura.model';
 
 @Component({
   selector: 'app-inicio',
@@ -11,7 +14,6 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
   styleUrls: ['./inicio.page.scss'],
 })
 export class InicioPage implements OnInit {
-
   nombreUsuario: string = '';
   apellidoUsuario: string = '';
   fechaHoy!: string;
@@ -19,13 +21,15 @@ export class InicioPage implements OnInit {
   photos: string[] = [];
   temperature: number | null = null;
   airQuality: string = '';
+  clasesHoy: Asignatura[] = [];
 
   constructor(
     public navCtrl: NavController,
     private photoService: PhotosService,
     private afAuth: AngularFireAuth,
     private weatherService: WeatherService,
-    private alertController: AlertController // Para mostrar alertas
+    private alertController: AlertController,
+    private asignaturaService: AsignaturaService
   ) {
     this.photos = this.photoService.photos;
   }
@@ -34,6 +38,7 @@ export class InicioPage implements OnInit {
     this.updateDate();
     this.loadPersonalData();
     this.getWeatherAndAirQuality('Santiago');
+    this.loadTodayClasses(); // Carga las clases de hoy
   }
 
   updateDate() {
@@ -63,7 +68,6 @@ export class InicioPage implements OnInit {
   getWeatherAndAirQuality(city: string) {
     this.weatherService.getWeather(city).subscribe(weatherData => {
       this.temperature = weatherData.main.temp;
-
       const { lat, lon } = weatherData.coord;
       this.weatherService.getAirQuality(lat, lon).subscribe(airData => {
         const aqi = airData.list[0].main.aqi;
@@ -90,13 +94,15 @@ export class InicioPage implements OnInit {
   }
 
   async startScan() {
-    await BarcodeScanner.checkPermission({ force: true });
-
-    BarcodeScanner.hideBackground(); // Hace la pantalla transparente durante el escaneo
-
-    const result = await BarcodeScanner.startScan();
-    if (result.hasContent) {
-      this.showAlert(result.content);
+    const permission = await BarcodeScanner.checkPermission({ force: true });
+    if (permission.granted) {
+      BarcodeScanner.hideBackground();
+      const result = await BarcodeScanner.startScan();
+      if (result.hasContent) {
+        this.showAlert(result.content);
+      }
+    } else {
+      console.error('No se concedieron permisos para el escáner');
     }
   }
 
@@ -106,7 +112,6 @@ export class InicioPage implements OnInit {
       message: content,
       buttons: ['OK']
     });
-
     await alert.present();
   }
 
@@ -114,20 +119,9 @@ export class InicioPage implements OnInit {
     BarcodeScanner.stopScan();
   }
 
-  clasesHoy = [
-    {
-      titulo: 'PROGRAMACIÓN DE APLICACIONES MÓVILES',
-      fecha: '2024-09-05',
-      ubicacion: 'SALA SJ-L7',
-      descripcion: 'Sección PGY4121'
-    },
-    {
-      titulo: 'ESTADÍSTICA DESCRIPTIVA',
-      fecha: '2024-09-05',
-      ubicacion: 'SALA SJ-L4',
-      descripcion: 'Sección MAT4140'
-    }
-  ];
+  loadTodayClasses() {
+    this.clasesHoy = this.asignaturaService.getAsignaturasPorDia(this.nombreDia);
+  }
 
   cerrarSesion() {
     this.afAuth.signOut().then(() => {
@@ -143,7 +137,7 @@ export class InicioPage implements OnInit {
     this.updateDate();
     this.loadPersonalData();
     this.getWeatherAndAirQuality('Santiago');
-
+    this.loadTodayClasses();
     setTimeout(() => {
       event.target.complete();
     }, 1000);

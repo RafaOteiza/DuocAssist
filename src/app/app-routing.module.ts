@@ -45,17 +45,25 @@ const routes: Routes = [
   },
   {
     path: 'recuperar-contrasena',
-    loadChildren: () => import('./recuperar-contrasena/recuperar-contrasena.module').then( m => m.RecuperarContrasenaPageModule)
+    loadChildren: () => import('./recuperar-contrasena/recuperar-contrasena.module').then(m => m.RecuperarContrasenaPageModule)
   },
   {
     path: 'personal-data',
-    loadChildren: () => import('./personal-data/personal-data.module').then( m => m.PersonalDataPageModule)
+    loadChildren: () => import('./personal-data/personal-data.module').then(m => m.PersonalDataPageModule)
   },
   {
-    path: 'not-found',
-    loadChildren: () => import('./not-found/not-found.module').then( m => m.NotFoundPageModule)
+    path: 'mis-asignaturas',
+    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then(m => m.MisAsignaturasPageModule),
+    canActivate: [IngresadoGuard]
   },
-
+  {
+    path: 'mis-asignaturas',
+    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
+  },
+  {
+    path: 'mis-asignaturas',
+    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
+  }
 ];
 
 @NgModule({

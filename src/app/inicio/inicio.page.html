@@ -11,9 +11,9 @@
   <ion-content>
     <ion-list>
       <ion-menu-toggle auto-hide="false">
-        <ion-item routerLink="/mis-asistencias">
-          <ion-icon slot="start" name="people-outline"></ion-icon>
-          <ion-label>Mis Asistencias</ion-label>
+        <ion-item routerLink="/mis-asignaturas">
+          <ion-icon slot="start" name="book-outline"></ion-icon>
+          <ion-label>Mis Asignaturas</ion-label>
         </ion-item>
       </ion-menu-toggle>
 
@@ -77,18 +77,19 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- Tarjeta de Clases de Hoy -->
   <ion-card class="item-bordered">
     <ion-card-header>
-      <ion-card-title class="custom-title">Tus clases de hoy</ion-card-title>
+      <ion-card-title class="custom-title">Tus Clases de Hoy</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let clase of clasesHoy">
+        <ion-item *ngFor="let asignatura of clasesHoy">
           <ion-label>
-            <h2>{{ clase.titulo }}</h2>
-            <p><strong>Fecha:</strong> {{ clase.fecha }}</p>
-            <p><strong>Ubicación:</strong> {{ clase.ubicacion }}</p>
-            <p><strong>Descripción:</strong> {{ clase.descripcion }}</p>
+            <h2>{{ asignatura.nombre }}</h2>
+            <p><strong>Horario:</strong> {{ asignatura.horario }}</p>
+            <p><strong>Sección:</strong> {{ asignatura.seccion }}</p>
+            <p><strong>Sala:</strong> {{ asignatura.sala }}</p>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -99,7 +100,7 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button [routerLink]="['/mis-asistencias']">
+      <ion-button [routerLink]="['/mis-asignaturas']">
         <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
