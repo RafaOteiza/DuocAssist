@@ -164,6 +164,6 @@ export class InicioPage implements OnInit {
     this.loadTodayClasses();
     setTimeout(() => {
       event.target.complete();
-    }, 1000);
-  }
+    }, 1000);
+  }
 }
