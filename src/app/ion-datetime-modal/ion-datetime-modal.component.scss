@@ -1,0 +1,30 @@
+/* src/app/ion-datetime-modal/ion-datetime-modal.component.scss */
+
+/* Estilos para centrar el calendario y ajustar el espaciado */
+ion-datetime {
+    width: 100%;
+    margin: 0 auto;
+    max-width: 400px;
+    --color-selected-text: #fff; /* Texto blanco en la fecha seleccionada */
+    --color-selected: #6200ee; /* Color de fondo para la fecha seleccionada */
+  }
+  
+  /* Ajustes de los botones */
+  ion-button {
+    --background: linear-gradient(45deg, #6a00ff, #9d00ff);
+    --border-radius: 8px;
+    font-weight: bold;
+  }
+  
+  /* Estilo del contenedor de asignaturas */
+  ion-content {
+    padding: 16px;
+  }
+  
+  ion-list {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
