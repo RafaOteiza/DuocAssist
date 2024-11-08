@@ -30,11 +30,6 @@ const routes: Routes = [
     canActivate: [NoIngresadoGuard]
   },
   {
-    path: 'mis-asistencias',
-    loadChildren: () => import('./mis-asistencias/mis-asistencias.module').then(m => m.MisAsistenciasPageModule),
-    canActivate: [IngresadoGuard]
-  },
-  {
     path: 'ajustes',
     loadChildren: () => import('./ajustes/ajustes.module').then(m => m.AjustesPageModule),
     canActivate: [IngresadoGuard]

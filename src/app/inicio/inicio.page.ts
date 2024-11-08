@@ -1,12 +1,12 @@
-// src/app/inicio/inicio.page.ts
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, ModalController } from '@ionic/angular';
 import { PhotosService } from '../photos.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { WeatherService } from '../services/weather.service';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AsignaturaService } from '../services/asignatura.service';
 import { Asignatura } from '../models/asignatura.model';
+import { IonDatetimeModalComponent } from '../ion-datetime-modal/ion-datetime-modal.component';
 
 @Component({
   selector: 'app-inicio',
@@ -18,6 +18,7 @@ export class InicioPage implements OnInit {
   apellidoUsuario: string = '';
   fechaHoy!: string;
   nombreDia!: string;
+  selectedDate!: string;
   photos: string[] = [];
   temperature: number | null = null;
   airQuality: string = '';
@@ -29,7 +30,8 @@ export class InicioPage implements OnInit {
     private afAuth: AngularFireAuth,
     private weatherService: WeatherService,
     private alertController: AlertController,
-    private asignaturaService: AsignaturaService
+    private asignaturaService: AsignaturaService,
+    private modalController: ModalController
   ) {
     this.photos = this.photoService.photos;
   }
@@ -38,7 +40,7 @@ export class InicioPage implements OnInit {
     this.updateDate();
     this.loadPersonalData();
     this.getWeatherAndAirQuality('Santiago');
-    this.loadTodayClasses(); // Carga las clases de hoy
+    this.loadTodayClasses();
   }
 
   updateDate() {
@@ -117,6 +119,28 @@ export class InicioPage implements OnInit {
 
   stopScan() {
     BarcodeScanner.stopScan();
+  }
+
+  async openCalendar() {
+    const modal = await this.modalController.create({
+      component: IonDatetimeModalComponent,
+      componentProps: {
+        fechaSeleccionada: this.selectedDate,
+      }
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      this.selectedDate = data.selectedDate;
+      this.loadClassesBySelectedDate(this.selectedDate);
+    }
+  }
+
+  loadClassesBySelectedDate(dateString: string) {
+    const date = new Date(dateString);
+    const dayOfWeek = date.toLocaleDateString('es-ES', { weekday: 'long' });
+    this.clasesHoy = this.asignaturaService.getAsignaturasPorDia(dayOfWeek);
   }
 
   loadTodayClasses() {
