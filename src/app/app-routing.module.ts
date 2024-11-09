@@ -24,6 +24,8 @@ const routes: Routes = [
     loadChildren: () => import('./inicio/inicio.module').then(m => m.InicioPageModule),
     canActivate: [IngresadoGuard]
   },
+  // Eliminar o comentar estas rutas si los módulos no existen:
+  /*
   {
     path: 'welcome',
     loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule),
@@ -34,6 +36,7 @@ const routes: Routes = [
     loadChildren: () => import('./mis-asistencias/mis-asistencias.module').then(m => m.MisAsistenciasPageModule),
     canActivate: [IngresadoGuard]
   },
+  */
   {
     path: 'ajustes',
     loadChildren: () => import('./ajustes/ajustes.module').then(m => m.AjustesPageModule),
@@ -70,3 +73,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
