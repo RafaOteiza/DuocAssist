@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { Asignatura } from '../models/asignatura.model';
 
@@ -20,6 +21,7 @@ export class AsignaturaService {
     { dia: 'Viernes', horario: '19:00 - 20:20', nombre: 'Estadística Descriptiva', seccion: 'MAT4140', sala: 'SJ-L4', profesorEmail: 'otroprofesor@profesor.duoc.cl' },
     { dia: 'Viernes', horario: '20:30 - 22:30', nombre: 'Calidad de Software', seccion: 'CSY4111', sala: 'SJ-L9', profesorEmail: 'otroprofesor@profesor.duoc.cl' },
     { dia: 'Sábado', horario: '13:00 - 14:20', nombre: 'Arquitectura', seccion: 'ASY4131', sala: 'SJ-L6', profesorEmail: 'otroprofesor@profesor.duoc.cl' }
+
   ];
 
   constructor() {}
@@ -27,11 +29,11 @@ export class AsignaturaService {
   getAsignaturasPorDia(dia: string): Asignatura[] {
     return this.asignaturas.filter(asignatura => asignatura.dia.toLowerCase() === dia.toLowerCase());
   }
-
   // Método para obtener asignaturas por correo de profesor y nombre específico
   getAsignaturasPorProfesor(email: string): Asignatura[] {
     return this.asignaturas.filter(
       asignatura => asignatura.profesorEmail === email && asignatura.nombre === 'Programación de Aplicaciones Móviles'
     );
   }
+
 }

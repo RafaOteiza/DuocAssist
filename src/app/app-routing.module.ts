@@ -25,7 +25,6 @@ const routes: Routes = [
     canActivate: [IngresadoGuard]
   },
   {
-<<<<<<< Updated upstream
     path: 'welcome',
     loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule),
     canActivate: [NoIngresadoGuard]
@@ -36,13 +35,6 @@ const routes: Routes = [
     canActivate: [IngresadoGuard]
   },
   {
-=======
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
-    canActivate: [NoIngresadoGuard]
-  },
-  {
->>>>>>> Stashed changes
     path: 'ajustes',
     loadChildren: () => import('./ajustes/ajustes.module').then(m => m.AjustesPageModule),
     canActivate: [IngresadoGuard]
@@ -53,17 +45,6 @@ const routes: Routes = [
   },
   {
     path: 'recuperar-contrasena',
-<<<<<<< Updated upstream
-    loadChildren: () => import('./recuperar-contrasena/recuperar-contrasena.module').then( m => m.RecuperarContrasenaPageModule)
-  },
-  {
-    path: 'personal-data',
-    loadChildren: () => import('./personal-data/personal-data.module').then( m => m.PersonalDataPageModule)
-  },  {
-    path: 'not-found',
-    loadChildren: () => import('./not-found/not-found.module').then( m => m.NotFoundPageModule)
-  },
-=======
     loadChildren: () => import('./recuperar-contrasena/recuperar-contrasena.module').then(m => m.RecuperarContrasenaPageModule)
   },
   {
@@ -76,18 +57,10 @@ const routes: Routes = [
     canActivate: [IngresadoGuard]
   },
   {
-    path: 'mis-asignaturas',
-    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
-  },
-  {
-    path: 'mis-asignaturas',
-    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
-  },  {
     path: 'profesor-asignaturas',
-    loadChildren: () => import('./profesor-asignaturas/profesor-asignaturas.module').then( m => m.ProfesorAsignaturasPageModule)
+    loadChildren: () => import('./profesor-asignaturas/profesor-asignaturas.module').then(m => m.ProfesorAsignaturasPageModule),
+    canActivate: [IngresadoGuard]
   }
->>>>>>> Stashed changes
-
 ];
 
 @NgModule({

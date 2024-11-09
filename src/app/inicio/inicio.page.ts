@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController, ModalController } from '@ionic/angular';
 import { PhotosService } from '../photos.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { WeatherService } from '../services/weather.service'; // Importa el servicio del clima
+import { WeatherService } from '../services/weather.service';
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { AsignaturaService } from '../services/asignatura.service';
+import { Asignatura } from '../models/asignatura.model';
+import { IonDatetimeModalComponent } from '../ion-datetime-modal/ion-datetime-modal.component';
 
 @Component({
   selector: 'app-inicio',
@@ -10,20 +14,24 @@ import { WeatherService } from '../services/weather.service'; // Importa el serv
   styleUrls: ['./inicio.page.scss'],
 })
 export class InicioPage implements OnInit {
-
   nombreUsuario: string = '';
   apellidoUsuario: string = '';
   fechaHoy!: string;
   nombreDia!: string;
+  selectedDate!: string;
   photos: string[] = [];
-  temperature: number | null = null; // Variable para almacenar la temperatura en Celsius
-  airQuality: string = ''; // Variable para almacenar la calidad del aire
+  temperature: number | null = null;
+  airQuality: string = '';
+  clasesHoy: Asignatura[] = [];
 
   constructor(
     public navCtrl: NavController,
     private photoService: PhotosService,
-    private afAuth: AngularFireAuth, // Servicio de Firebase Auth
-    private weatherService: WeatherService // Servicio del clima
+    private afAuth: AngularFireAuth,
+    private weatherService: WeatherService,
+    private alertController: AlertController,
+    private asignaturaService: AsignaturaService,
+    private modalController: ModalController
   ) {
     this.photos = this.photoService.photos;
   }
@@ -31,7 +39,8 @@ export class InicioPage implements OnInit {
   ngOnInit() {
     this.updateDate();
     this.loadPersonalData();
-    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
+    this.getWeatherAndAirQuality('Santiago');
+    this.loadTodayClasses();
   }
 
   updateDate() {
@@ -58,12 +67,9 @@ export class InicioPage implements OnInit {
     }
   }
 
-  // Método para obtener el clima y la calidad del aire
   getWeatherAndAirQuality(city: string) {
     this.weatherService.getWeather(city).subscribe(weatherData => {
       this.temperature = weatherData.main.temp;
-
-      // Obtener la calidad del aire usando las coordenadas del clima
       const { lat, lon } = weatherData.coord;
       this.weatherService.getAirQuality(lat, lon).subscribe(airData => {
         const aqi = airData.list[0].main.aqi;
@@ -74,7 +80,6 @@ export class InicioPage implements OnInit {
     });
   }
 
-  // Método para interpretar el AQI (Air Quality Index)
   getAirQualityDescription(aqi: number): string {
     switch (aqi) {
       case 1: return 'Buena';
@@ -90,20 +95,57 @@ export class InicioPage implements OnInit {
     await this.photoService.addNewPhoto();
   }
 
-  clasesHoy = [
-    {
-      titulo: 'PROGRAMACIÓN DE APLICACIONES MÓVILES',
-      fecha: '2024-09-05',
-      ubicacion: 'SALA SJ-L7',
-      descripcion: 'Sección PGY4121'
-    },
-    {
-      titulo: 'ESTADÍSTICA DESCRIPTIVA',
-      fecha: '2024-09-05',
-      ubicacion: 'SALA SJ-L4',
-      descripcion: 'Sección MAT4140'
+  async startScan() {
+    const permission = await BarcodeScanner.checkPermission({ force: true });
+    if (permission.granted) {
+      BarcodeScanner.hideBackground();
+      const result = await BarcodeScanner.startScan();
+      if (result.hasContent) {
+        this.showAlert(result.content);
+      }
+    } else {
+      console.error('No se concedieron permisos para el escáner');
     }
-  ];
+  }
+
+  async showAlert(content: string) {
+    const alert = await this.alertController.create({
+      header: 'Contenido del QR',
+      message: content,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  stopScan() {
+    BarcodeScanner.stopScan();
+  }
+
+  async openCalendar() {
+    const modal = await this.modalController.create({
+      component: IonDatetimeModalComponent,
+      componentProps: {
+        fechaSeleccionada: this.selectedDate,
+      }
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      this.selectedDate = data.selectedDate;
+      this.loadClassesBySelectedDate(this.selectedDate);
+    }
+  }
+
+  loadClassesBySelectedDate(dateString: string) {
+    const date = new Date(dateString);
+    const dayOfWeek = date.toLocaleDateString('es-ES', { weekday: 'long' });
+    this.clasesHoy = this.asignaturaService.getAsignaturasPorDia(dayOfWeek);
+  }
+
+  loadTodayClasses() {
+    this.clasesHoy = this.asignaturaService.getAsignaturasPorDia(this.nombreDia);
+  }
 
   cerrarSesion() {
     this.afAuth.signOut().then(() => {
@@ -118,10 +160,10 @@ export class InicioPage implements OnInit {
   doRefresh(event: any) {
     this.updateDate();
     this.loadPersonalData();
-    this.getWeatherAndAirQuality('Santiago'); // Cambia 'Santiago' por la ciudad deseada
-
+    this.getWeatherAndAirQuality('Santiago');
+    this.loadTodayClasses();
     setTimeout(() => {
       event.target.complete();
-    }, 1000); // Tiempo de espera para la animación de refresco
-  }
+    }, 1000);
+  }
 }
