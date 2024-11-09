@@ -20,8 +20,7 @@ export class LoginPage implements OnInit {
     this.formularioLogin = this.fb.group({
       email: new FormControl("", [
         Validators.required,
-        Validators.email,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@duocuc\.cl$/), // Permitir solo correos con @duocuc.cl
+        Validators.email
       ]),
       password: new FormControl("", Validators.required),
     });
@@ -32,11 +31,11 @@ export class LoginPage implements OnInit {
   async ingresar() {
     const { email, password } = this.formularioLogin.value;
 
-    // Verificar que el correo tiene el dominio correcto
-    if (!this.formularioLogin.get('email')?.valid) {
+    // Verificar dominio del correo en login
+    if (!email.endsWith('@duocuc.cl') && !email.endsWith('@profesor.duoc.cl')) {
       const alert = await this.alertController.create({
         header: 'Correo Inválido',
-        message: 'Solo se permiten correos electrónicos @duocuc.cl',
+        message: 'Solo se permiten correos electrónicos @duocuc.cl y @profesor.duoc.cl',
         buttons: ['Aceptar'],
       });
       await alert.present();
@@ -54,7 +53,12 @@ export class LoginPage implements OnInit {
         console.error('El token no se guardó en localStorage');
       }
 
-      this.navCtrl.navigateRoot('inicio');
+      // Redireccionar según el tipo de correo
+      if (email.endsWith('@profesor.duoc.cl')) {
+        this.navCtrl.navigateRoot('profesor-asignaturas'); // Redirige a la vista de profesor
+      } else {
+        this.navCtrl.navigateRoot('inicio'); // Redirige a la vista de alumno
+      }
     } catch (error: any) {
       console.error('Error durante el inicio de sesión:', error);
       const alert = await this.alertController.create({
@@ -66,3 +70,4 @@ export class LoginPage implements OnInit {
     }
   }
 }
+

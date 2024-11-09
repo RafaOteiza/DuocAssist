@@ -5,4 +5,5 @@ export interface Asignatura {
     nombre: string;        // Nombre de la asignatura (por ejemplo, "Ética para el Trabajo")
     seccion: string;       // Sección de la asignatura (por ejemplo, "EAY4470")
     sala: string;          // Sala donde se imparte la asignatura (por ejemplo, "SJ-706")
+    profesorEmail?: string; // Añadir campo opcional profesor
 }

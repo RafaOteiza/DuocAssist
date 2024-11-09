@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router'; // Importamos el Router para redirección
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +18,11 @@ export class AuthService {
           // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', user.uid);
 
-          // Verificar si el usuario tiene datos personales guardados
-          const datosPersonales = localStorage.getItem('datosPersonales');
-          
-          if (!datosPersonales) {
-            this.router.navigate(['/personal-data']);
+          // Redirigir al usuario según su dominio de correo electrónico
+          if (email.endsWith('@profesor.duoc.cl')) {
+            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
           } else {
-            this.router.navigate(['/inicio']);
+            this.router.navigate(['/inicio']); // Vista para el alumno
           }
         }
       })
@@ -43,13 +41,11 @@ export class AuthService {
           // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', uid);
 
-          // Verificar si el usuario tiene datos personales guardados
-          const datosPersonales = localStorage.getItem('datosPersonales');
-          
-          if (!datosPersonales) {
-            this.router.navigate(['/personal-data']);
+          // Redirigir al usuario según su dominio de correo electrónico
+          if (email.endsWith('@profesor.duoc.cl')) {
+            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
           } else {
-            this.router.navigate(['/inicio']);
+            this.router.navigate(['/inicio']); // Vista para el alumno
           }
         }
       })
@@ -90,5 +86,6 @@ export class AuthService {
   // Método para obtener el estado de autenticación del usuario
   getAuthState() {
     return this.afAuth.authState;
-  }
+  }
 }
+

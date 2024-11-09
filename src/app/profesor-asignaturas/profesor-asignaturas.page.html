@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Carga de Asignaturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="asignaturas.length > 0; else noAsignaturas">
+    <ion-item *ngFor="let asignatura of asignaturas">
+      <ion-label>
+        <h2>{{ asignatura.nombre }}</h2>
+        <p><strong>Día:</strong> {{ asignatura.dia }}</p>
+        <p><strong>Horario:</strong> {{ asignatura.horario }}</p>
+        <p><strong>Sección:</strong> {{ asignatura.seccion }}</p>
+        <p><strong>Sala:</strong> {{ asignatura.sala }}</p>
+      </ion-label>
+      <ion-button slot="end" color="primary" (click)="generarQR(asignatura)">
+        Generar QR
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #noAsignaturas>
+    <ion-card>
+      <ion-card-content>
+        <p>No hay asignaturas para mostrar.</p>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>
