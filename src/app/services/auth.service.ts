@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router'; // Importamos el Router para redirección
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,7 @@ export class AuthService {
           // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', user.uid);
 
+<<<<<<< Updated upstream
           // Verificar si el usuario tiene datos personales guardados
           const datosPersonales = localStorage.getItem('datosPersonales');
           
@@ -27,6 +28,13 @@ export class AuthService {
           } else {
             // Si ya tiene datos personales, redirigir a la página de inicio
             this.router.navigate(['/inicio']);
+=======
+          // Redirigir al usuario según su dominio de correo electrónico
+          if (email.endsWith('@profesor.duoc.cl')) {
+            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
+          } else {
+            this.router.navigate(['/inicio']); // Vista para el alumno
+>>>>>>> Stashed changes
           }
         }
       })
@@ -45,6 +53,7 @@ export class AuthService {
           // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', uid);
 
+<<<<<<< Updated upstream
           // Verificar si el usuario tiene datos personales guardados
           const datosPersonales = localStorage.getItem('datosPersonales');
           
@@ -54,6 +63,13 @@ export class AuthService {
           } else {
             // Si ya tiene datos personales, redirigir a la página de inicio
             this.router.navigate(['/inicio']);
+=======
+          // Redirigir al usuario según su dominio de correo electrónico
+          if (email.endsWith('@profesor.duoc.cl')) {
+            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
+          } else {
+            this.router.navigate(['/inicio']); // Vista para el alumno
+>>>>>>> Stashed changes
           }
         }
       })
@@ -80,4 +96,13 @@ export class AuthService {
   getAuthState() {
     return this.afAuth.authState;
   }
+<<<<<<< Updated upstream
+=======
+
+  // Método para obtener el correo del usuario actual
+  async getCurrentUserEmail(): Promise<string | null> {
+    const user = await this.afAuth.currentUser;
+    return user?.email || null;
+  }
+>>>>>>> Stashed changes
 }
