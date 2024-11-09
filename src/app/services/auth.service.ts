@@ -87,5 +87,11 @@ export class AuthService {
   getAuthState() {
     return this.afAuth.authState;
   }
+
+  // Método para obtener el correo del usuario actual
+  async getCurrentUserEmail(): Promise<string | null> {
+    const user = await this.afAuth.currentUser;
+    return user?.email || null;
+  }
 }
 
