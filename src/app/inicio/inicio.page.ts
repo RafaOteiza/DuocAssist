@@ -5,6 +5,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { WeatherService } from '../services/weather.service';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AsignaturaService } from '../services/asignatura.service';
+import { AsistenciaService } from '../services/asistencia.service';
 import { Asignatura } from '../models/asignatura.model';
 import { IonDatetimeModalComponent } from '../ion-datetime-modal/ion-datetime-modal.component';
 
@@ -31,7 +32,8 @@ export class InicioPage implements OnInit {
     private weatherService: WeatherService,
     private alertController: AlertController,
     private asignaturaService: AsignaturaService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private asistenciaService: AsistenciaService
   ) {
     this.photos = this.photoService.photos;
   }
@@ -101,20 +103,34 @@ export class InicioPage implements OnInit {
       BarcodeScanner.hideBackground();
       const result = await BarcodeScanner.startScan();
       if (result.hasContent) {
-        this.showAlert(result.content);
+        this.registrarAsistenciaDesdeQR(result.content);
       }
     } else {
       console.error('No se concedieron permisos para el escáner');
     }
   }
 
-  async showAlert(content: string) {
-    const alert = await this.alertController.create({
-      header: 'Contenido del QR',
-      message: content,
-      buttons: ['OK']
-    });
-    await alert.present();
+  async registrarAsistenciaDesdeQR(qrData: string) {
+    try {
+      const [asignatura, seccion, sala] = qrData.split('|').map(d => d.trim());
+      await this.asistenciaService.registrarAsistencia(asignatura, seccion, sala);
+
+      const alert = await this.alertController.create({
+        header: 'Asistencia Registrada',
+        message: 'La asistencia ha sido registrada exitosamente.',
+        buttons: ['OK']
+      });
+      await alert.present();
+
+    } catch (error) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Hubo un problema al registrar la asistencia. Inténtalo nuevamente.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      console.error('Error al registrar la asistencia:', error);
+    }
   }
 
   stopScan() {
