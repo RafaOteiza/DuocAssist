@@ -15,3 +15,4 @@ describe('ProfesorAsignaturasPage', () => {
     expect(component).toBeTruthy();
   });
 });
+
