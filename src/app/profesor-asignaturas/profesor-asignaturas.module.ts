@@ -18,3 +18,4 @@ import { ProfesorAsignaturasPage } from './profesor-asignaturas.page';
   declarations: [ProfesorAsignaturasPage]
 })
 export class ProfesorAsignaturasPageModule {}
+

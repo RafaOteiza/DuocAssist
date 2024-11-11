@@ -24,11 +24,19 @@ const routes: Routes = [
     loadChildren: () => import('./inicio/inicio.module').then(m => m.InicioPageModule),
     canActivate: [IngresadoGuard]
   },
+  // Eliminar o comentar estas rutas si los módulos no existen:
+  /*
   {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
+    path: 'welcome',
+    loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule),
     canActivate: [NoIngresadoGuard]
   },
+  {
+    path: 'mis-asistencias',
+    loadChildren: () => import('./mis-asistencias/mis-asistencias.module').then(m => m.MisAsistenciasPageModule),
+    canActivate: [IngresadoGuard]
+  },
+  */
   {
     path: 'ajustes',
     loadChildren: () => import('./ajustes/ajustes.module').then(m => m.AjustesPageModule),
@@ -52,12 +60,9 @@ const routes: Routes = [
     canActivate: [IngresadoGuard]
   },
   {
-    path: 'mis-asignaturas',
-    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
-  },
-  {
-    path: 'mis-asignaturas',
-    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then( m => m.MisAsignaturasPageModule)
+    path: 'profesor-asignaturas',
+    loadChildren: () => import('./profesor-asignaturas/profesor-asignaturas.module').then(m => m.ProfesorAsignaturasPageModule),
+    canActivate: [IngresadoGuard]
   }
 ];
 
@@ -68,3 +73,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
