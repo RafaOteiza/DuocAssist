@@ -1,72 +1,91 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { LoginPage } from './login/login.page';
 import { NoIngresadoGuard } from './no-ingresado.guard';
-import { IngresadoGuard } from './ingresado.guard';
+import { AlumnoGuard } from './guards/alumno.guard';
+import { ProfesorGuard } from './guards/profesor.guard';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule),
-    canActivate: [NoIngresadoGuard]
+    component: LoginPage,
+    canActivate: [NoIngresadoGuard],
   },
   {
     path: 'registro',
-    loadChildren: () => import('./registro/registro.module').then(m => m.RegistroPageModule),
-    canActivate: [NoIngresadoGuard]
-  },
-  {
-    path: 'inicio',
-    loadChildren: () => import('./inicio/inicio.module').then(m => m.InicioPageModule),
-    canActivate: [IngresadoGuard]
-  },
-  {
-    path: 'welcome',
-    loadChildren: () => import('./welcome/welcome.module').then(m => m.WelcomePageModule),
-    canActivate: [NoIngresadoGuard]
-  },
-  {
-    path: 'mis-asistencias',
-    loadChildren: () => import('./mis-asistencias/mis-asistencias.module').then(m => m.MisAsistenciasPageModule),
-    canActivate: [IngresadoGuard]
-  },
-  {
-    path: 'ajustes',
-    loadChildren: () => import('./ajustes/ajustes.module').then(m => m.AjustesPageModule),
-    canActivate: [IngresadoGuard]
-  },
-  {
-    path: 'not-found',
-    loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundPageModule)
+    loadChildren: () =>
+      import('./registro/registro.module').then((m) => m.RegistroPageModule),
   },
   {
     path: 'recuperar-contrasena',
-    loadChildren: () => import('./recuperar-contrasena/recuperar-contrasena.module').then(m => m.RecuperarContrasenaPageModule)
-  },
-  {
-    path: 'personal-data',
-    loadChildren: () => import('./personal-data/personal-data.module').then(m => m.PersonalDataPageModule)
-  },
-  {
-    path: 'mis-asignaturas',
-    loadChildren: () => import('./mis-asignaturas/mis-asignaturas.module').then(m => m.MisAsignaturasPageModule),
-    canActivate: [IngresadoGuard]
+    loadChildren: () =>
+      import('./recuperar-contrasena/recuperar-contrasena.module').then(
+        (m) => m.RecuperarContrasenaPageModule
+      ),
   },
   {
     path: 'profesor-asignaturas',
-    loadChildren: () => import('./profesor-asignaturas/profesor-asignaturas.module').then(m => m.ProfesorAsignaturasPageModule),
-    canActivate: [IngresadoGuard]
-  }
+    loadChildren: () =>
+      import('./profesor-asignaturas/profesor-asignaturas.module').then(
+        (m) => m.ProfesorAsignaturasPageModule
+      ),
+    canActivate: [ProfesorGuard],
+  },
+  {
+    path: 'personal-data',
+    loadChildren: () =>
+      import('./personal-data/personal-data.module').then(
+        (m) => m.PersonalDataPageModule
+      ),
+  },
+  {
+    path: 'not-found',
+    loadChildren: () =>
+      import('./not-found/not-found.module').then((m) => m.NotFoundPageModule),
+  },
+  {
+    path: 'mis-asignaturas',
+    loadChildren: () =>
+      import('./mis-asignaturas/mis-asignaturas.module').then(
+        (m) => m.MisAsignaturasPageModule
+      ),
+    canActivate: [AlumnoGuard],
+  },
+  {
+    path: 'inicio',
+    loadChildren: () =>
+      import('./inicio/inicio.module').then((m) => m.InicioPageModule),
+    canActivate: [AlumnoGuard],
+  },
+  {
+    path: 'ajustes',
+    loadChildren: () =>
+      import('./ajustes/ajustes.module').then((m) => m.AjustesPageModule),
+    canActivate: [AlumnoGuard],
+  },
+  {
+    path: 'asistencias',
+    loadChildren: () =>
+      import('./asistencias/asistencias.module').then(
+        (m) => m.AsistenciasPageModule
+      ),
+    canActivate: [AlumnoGuard],
+  },
+  {
+    path: '**',
+    redirectTo: 'not-found',
+  },
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

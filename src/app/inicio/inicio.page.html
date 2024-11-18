@@ -18,6 +18,14 @@
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="false">
+        <ion-item routerLink="/asistencias">
+          <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+          <ion-label>Mis Asistencias</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+      
+
+      <ion-menu-toggle auto-hide="false">
         <ion-item routerLink="/ajustes">
           <ion-icon slot="start" name="settings-outline"></ion-icon>
           <ion-label>Ajustes</ion-label>
@@ -29,7 +37,7 @@
           <ion-icon slot="start" name="log-out-outline"></ion-icon>
           <ion-label>Cerrar Sesión</ion-label>
         </ion-item>
-      </ion-menu-toggle>
+      </ion-menu-toggle>      
     </ion-list>
   </ion-content>
 </ion-menu>
@@ -60,7 +68,6 @@
     </ion-card-header>
   </ion-card>
 
-  <!-- Tarjeta de Clima Actual -->
   <ion-card class="item-bordered">
     <ion-card-header>
       <ion-card-title class="custom-title">Clima Actual</ion-card-title>
@@ -77,7 +84,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Tarjeta de Clases de Hoy -->
   <ion-card class="item-bordered">
     <ion-card-header>
       <ion-card-title class="custom-title">Tus Clases de Hoy</ion-card-title>
@@ -97,6 +103,9 @@
   </ion-card>
 </ion-content>
 
+<!-- Overlay del escáner -->
+<div class="scan-overlay" *ngIf="qrService.scan"></div>
+
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -113,7 +122,7 @@
   </ion-toolbar>
 
   <div class="qr-button-container">
-    <ion-button class="qr-button" (click)="startScan()">
+    <ion-button class="qr-button" (click)="startQrScan()">
       <ion-icon slot="icon-only" name="qr-code-outline"></ion-icon>
     </ion-button>
   </div>
