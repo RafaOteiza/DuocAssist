@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Selecciona una fecha</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-datetime [(ngModel)]="fechaSeleccionada" presentation="date" (ionChange)="onDateChange($event)"></ion-datetime>
+
+  <div *ngIf="asignaturasDelDia.length > 0">
+    <ion-list>
+      <ion-item *ngFor="let asignatura of asignaturasDelDia">
+        <ion-label>
+          <h2>{{ asignatura.nombre }}</h2>
+          <p><strong>Horario:</strong> {{ asignatura.horario }}</p>
+          <p><strong>Sección:</strong> {{ asignatura.seccion }}</p>
+          <p><strong>Sala:</strong> {{ asignatura.sala }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+  <div *ngIf="asignaturasDelDia.length === 0 && fechaSeleccionada">
+    <p style="text-align: center; margin-top: 10px;">No hay asignaturas para este día.</p>
+  </div>
+</ion-content>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DuocAssist</string> <!-- Cambia el nombre de la aplicación -->
+    <string name="title_activity_main">DuocAssist</string> <!-- Cambia el título de la actividad principal -->
+    <string name="package_name">com.example.duocassistv2</string> <!-- Mantén el nombre del paquete si no deseas modificarlo -->
+    <string name="custom_url_scheme">com.example.duocassistv2</string> <!-- Mantén el esquema de URL personalizado si no cambias el paquete -->
+</resources>

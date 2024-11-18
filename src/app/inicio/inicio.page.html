@@ -1,0 +1,135 @@
+<ion-menu contentId="main-content" side="start">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <ion-text color="light">Duoc</ion-text>
+        <ion-text color="warning">Assist</ion-text>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-list>
+      <ion-menu-toggle auto-hide="false">
+        <ion-item routerLink="/mis-asignaturas">
+          <ion-icon slot="start" name="book-outline"></ion-icon>
+          <ion-label>Mis Asignaturas</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+
+      <ion-menu-toggle auto-hide="false">
+        <ion-item routerLink="/asistencias">
+          <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
+          <ion-label>Mis Asistencias</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+      
+
+      <ion-menu-toggle auto-hide="false">
+        <ion-item routerLink="/ajustes">
+          <ion-icon slot="start" name="settings-outline"></ion-icon>
+          <ion-label>Ajustes</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+
+      <ion-menu-toggle auto-hide="false">
+        <ion-item (click)="cerrarSesion()">
+          <ion-icon slot="start" name="log-out-outline"></ion-icon>
+          <ion-label>Cerrar Sesión</ion-label>
+        </ion-item>
+      </ion-menu-toggle>      
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-router-outlet id="main-content"></ion-router-outlet>
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-text color="light">Duoc</ion-text>
+      <ion-text color="warning">Assist</ion-text>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-content" [fullscreen]="true" class="not-found-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline" pullingText="Desliza hacia abajo para refrescar" refreshingSpinner="crescent" refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="custom-title">Bienvenido {{ nombreUsuario }} {{ apellidoUsuario }}</ion-card-title>
+      <ion-card-subtitle>{{ fechaHoy }}</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+
+  <ion-card class="item-bordered">
+    <ion-card-header>
+      <ion-card-title class="custom-title">Clima Actual</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="temperature !== null">
+        <p>Temperatura Actual: {{ temperature }} °C</p>
+        <p>Calidad del Aire: {{ airQuality }}</p>
+        <p>Día: {{ nombreDia }}</p>
+      </div>
+      <div *ngIf="temperature === null">
+        <p>Cargando clima...</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="item-bordered">
+    <ion-card-header>
+      <ion-card-title class="custom-title">Tus Clases de Hoy</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let asignatura of clasesHoy">
+          <ion-label>
+            <h2>{{ asignatura.nombre }}</h2>
+            <p><strong>Horario:</strong> {{ asignatura.horario }}</p>
+            <p><strong>Sección:</strong> {{ asignatura.seccion }}</p>
+            <p><strong>Sala:</strong> {{ asignatura.sala }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<!-- Overlay del escáner -->
+<div class="scan-overlay" *ngIf="qrService.scan"></div>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="openCalendar()">
+        <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="['/ajustes']">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <div class="qr-button-container">
+    <ion-button class="qr-button" (click)="startQrScan()">
+      <ion-icon slot="icon-only" name="qr-code-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <ion-toolbar>
+    <ion-title size="small" text-center>
+      © 2024 DuocAssist. Todos los derechos reservados.
+    </ion-title>
+  </ion-toolbar>
+</ion-footer>

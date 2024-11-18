@@ -1,0 +1,29 @@
+// Contenedor del mensaje y logo
+.welcome-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .welcome-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--ion-color-primary);
+  }
+  
+  .logo-image {
+    width: 150px;
+    height: auto;
+    margin: 10px auto;
+  }
+  
+  // Título del formulario de inicio de sesión
+  .login-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #8a2be2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  

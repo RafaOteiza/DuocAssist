@@ -1,0 +1,16 @@
+<!-- src/app/qr-modal/qr-modal.component.html -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Código QR</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="qr-container">
+    <img [src]="qrUrl" alt="Código QR" *ngIf="qrUrl">
+  </div>
+</ion-content>
