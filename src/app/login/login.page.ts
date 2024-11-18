@@ -10,6 +10,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginPage implements OnInit {
   formularioLogin: FormGroup;
+  recordarUsuario: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -18,20 +19,22 @@ export class LoginPage implements OnInit {
     private authService: AuthService
   ) {
     this.formularioLogin = this.fb.group({
-      email: new FormControl("", [
-        Validators.required,
-        Validators.email
-      ]),
-      password: new FormControl("", Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', Validators.required),
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioGuardado') || '{}');
+    if (usuarioGuardado?.email && usuarioGuardado?.password) {
+      this.formularioLogin.patchValue(usuarioGuardado);
+      this.recordarUsuario = true;
+    }
+  }
 
   async ingresar() {
     const { email, password } = this.formularioLogin.value;
 
-    // Verificar dominio del correo en login
     if (!email.endsWith('@duocuc.cl') && !email.endsWith('@profesor.duoc.cl')) {
       const alert = await this.alertController.create({
         header: 'Correo Inválido',
@@ -43,31 +46,22 @@ export class LoginPage implements OnInit {
     }
 
     try {
-      console.log('Intentando iniciar sesión con:', email);
       await this.authService.login(email, password);
 
-      const token = localStorage.getItem('userToken');
-      if (token) {
-        console.log('Token almacenado en localStorage:', token);
+      if (this.recordarUsuario) {
+        localStorage.setItem('usuarioGuardado', JSON.stringify({ email, password }));
       } else {
-        console.error('El token no se guardó en localStorage');
+        localStorage.removeItem('usuarioGuardado');
       }
 
-      // Redireccionar según el tipo de correo
-      if (email.endsWith('@profesor.duoc.cl')) {
-        this.navCtrl.navigateRoot('profesor-asignaturas'); // Redirige a la vista de profesor
-      } else {
-        this.navCtrl.navigateRoot('inicio'); // Redirige a la vista de alumno
-      }
+      console.log('Inicio de sesión exitoso');
     } catch (error: any) {
-      console.error('Error durante el inicio de sesión:', error);
       const alert = await this.alertController.create({
         header: '¡Error!',
-        message: error?.message || 'Ocurrió un error desconocido.',
+        message: error || 'Ocurrió un error al iniciar sesión. Inténtalo nuevamente.',
         buttons: ['Aceptar'],
       });
       await alert.present();
     }
   }
 }
-

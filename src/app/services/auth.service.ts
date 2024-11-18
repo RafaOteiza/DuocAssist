@@ -8,21 +8,18 @@ import { Router } from '@angular/router';
 export class AuthService {
   constructor(private afAuth: AngularFireAuth, private router: Router) {}
 
-  // Método para registrar al usuario
   register(email: string, password: string) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
 
         if (user) {
-          // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', user.uid);
 
-          // Redirigir al usuario según su dominio de correo electrónico
           if (email.endsWith('@profesor.duoc.cl')) {
-            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
+            this.router.navigate(['/profesor-asignaturas']);
           } else {
-            this.router.navigate(['/inicio']); // Vista para el alumno
+            this.router.navigate(['/inicio']);
           }
         }
       })
@@ -32,25 +29,21 @@ export class AuthService {
       });
   }
 
-  // Método para iniciar sesión con manejo de errores personalizado
   login(email: string, password: string): Promise<void | string> {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         const uid = userCredential.user?.uid;
         if (uid) {
-          // Guardar el token de usuario en localStorage
           localStorage.setItem('userToken', uid);
 
-          // Redirigir al usuario según su dominio de correo electrónico
           if (email.endsWith('@profesor.duoc.cl')) {
-            this.router.navigate(['/profesor-asignaturas']); // Vista para el profesor
+            this.router.navigate(['/profesor-asignaturas']);
           } else {
-            this.router.navigate(['/inicio']); // Vista para el alumno
+            this.router.navigate(['/inicio']);
           }
         }
       })
       .catch((error) => {
-        // Personalización de mensajes de error
         let errorMessage = '';
 
         switch (error.code) {
@@ -68,11 +61,10 @@ export class AuthService {
         }
 
         console.error('Error al iniciar sesión:', errorMessage);
-        return Promise.reject(errorMessage); // Retorna el mensaje de error personalizado
+        return Promise.reject(errorMessage);
       });
   }
 
-  // Método para cerrar sesión
   logout() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('datosPersonales');
@@ -83,15 +75,12 @@ export class AuthService {
       });
   }
 
-  // Método para obtener el estado de autenticación del usuario
   getAuthState() {
     return this.afAuth.authState;
   }
 
-  // Método para obtener el correo del usuario actual
   async getCurrentUserEmail(): Promise<string | null> {
     const user = await this.afAuth.currentUser;
     return user?.email || null;
   }
 }
-

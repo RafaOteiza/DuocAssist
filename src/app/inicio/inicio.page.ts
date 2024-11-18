@@ -3,11 +3,11 @@ import { NavController, AlertController, ModalController } from '@ionic/angular'
 import { PhotosService } from '../photos.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { WeatherService } from '../services/weather.service';
-import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { AsignaturaService } from '../services/asignatura.service';
 import { AsistenciaService } from '../services/asistencia.service';
 import { Asignatura } from '../models/asignatura.model';
 import { IonDatetimeModalComponent } from '../ion-datetime-modal/ion-datetime-modal.component';
+import { QrService } from '../services/qr.service';
 
 @Component({
   selector: 'app-inicio',
@@ -33,7 +33,8 @@ export class InicioPage implements OnInit {
     private alertController: AlertController,
     private asignaturaService: AsignaturaService,
     private modalController: ModalController,
-    private asistenciaService: AsistenciaService
+    private asistenciaService: AsistenciaService,
+    public qrService: QrService
   ) {
     this.photos = this.photoService.photos;
   }
@@ -50,7 +51,7 @@ export class InicioPage implements OnInit {
     this.fechaHoy = hoy.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
     this.nombreDia = hoy.toLocaleDateString('es-ES', { weekday: 'long' });
   }
@@ -61,7 +62,7 @@ export class InicioPage implements OnInit {
       this.nombreUsuario = datosPersonales.nombre;
       this.apellidoUsuario = datosPersonales.apellido || '';
     } else {
-      this.afAuth.authState.subscribe(user => {
+      this.afAuth.authState.subscribe((user) => {
         if (user && user.email) {
           this.nombreUsuario = user.email.split('@')[0];
         }
@@ -70,26 +71,35 @@ export class InicioPage implements OnInit {
   }
 
   getWeatherAndAirQuality(city: string) {
-    this.weatherService.getWeather(city).subscribe(weatherData => {
-      this.temperature = weatherData.main.temp;
-      const { lat, lon } = weatherData.coord;
-      this.weatherService.getAirQuality(lat, lon).subscribe(airData => {
-        const aqi = airData.list[0].main.aqi;
-        this.airQuality = this.getAirQualityDescription(aqi);
-      });
-    }, error => {
-      console.error('Error al obtener el clima o la calidad del aire:', error);
-    });
+    this.weatherService.getWeather(city).subscribe(
+      (weatherData) => {
+        this.temperature = weatherData.main.temp;
+        const { lat, lon } = weatherData.coord;
+        this.weatherService.getAirQuality(lat, lon).subscribe((airData) => {
+          const aqi = airData.list[0].main.aqi;
+          this.airQuality = this.getAirQualityDescription(aqi);
+        });
+      },
+      (error) => {
+        console.error('Error al obtener el clima o la calidad del aire:', error);
+      }
+    );
   }
 
   getAirQualityDescription(aqi: number): string {
     switch (aqi) {
-      case 1: return 'Buena';
-      case 2: return 'Moderada';
-      case 3: return 'Dañina para grupos sensibles';
-      case 4: return 'Dañina';
-      case 5: return 'Muy dañina';
-      default: return 'Desconocida';
+      case 1:
+        return 'Buena';
+      case 2:
+        return 'Moderada';
+      case 3:
+        return 'Dañina para grupos sensibles';
+      case 4:
+        return 'Dañina';
+      case 5:
+        return 'Muy dañina';
+      default:
+        return 'Desconocida';
     }
   }
 
@@ -97,44 +107,48 @@ export class InicioPage implements OnInit {
     await this.photoService.addNewPhoto();
   }
 
-  async startScan() {
-    const permission = await BarcodeScanner.checkPermission({ force: true });
-    if (permission.granted) {
-      BarcodeScanner.hideBackground();
-      const result = await BarcodeScanner.startScan();
-      if (result.hasContent) {
-        this.registrarAsistenciaDesdeQR(result.content);
+  async startQrScan() {
+    try {
+      document.body.classList.add('scanner-active');
+      await this.qrService.StartScan();
+      document.body.classList.remove('scanner-active');
+
+      if (this.qrService.scanResult) {
+        this.registrarAsistenciaDesdeQR(this.qrService.scanResult);
+      } else {
+        console.error('Escaneo fallido o cancelado.');
       }
-    } else {
-      console.error('No se concedieron permisos para el escáner');
+    } catch (error) {
+      console.error('Error al escanear:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Hubo un problema al escanear el código. Inténtalo nuevamente.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      document.body.classList.remove('scanner-active');
     }
   }
 
   async registrarAsistenciaDesdeQR(qrData: string) {
     try {
-      const [asignatura, seccion, sala] = qrData.split('|').map(d => d.trim());
+      const [asignatura, seccion, sala] = qrData.split('|').map((d) => d.trim());
       await this.asistenciaService.registrarAsistencia(asignatura, seccion, sala);
 
-      const alert = await this.alertController.create({
-        header: 'Asistencia Registrada',
-        message: 'La asistencia ha sido registrada exitosamente.',
-        buttons: ['OK']
-      });
-      await alert.present();
-
+      await this.showAlert('Asistencia Registrada', 'La asistencia ha sido registrada exitosamente.');
     } catch (error) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Hubo un problema al registrar la asistencia. Inténtalo nuevamente.',
-        buttons: ['OK']
-      });
-      await alert.present();
+      await this.showAlert('Error', 'Hubo un problema al registrar la asistencia. Inténtalo nuevamente.');
       console.error('Error al registrar la asistencia:', error);
     }
   }
 
-  stopScan() {
-    BarcodeScanner.stopScan();
+  async showAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK'],
+    });
+    await alert.present();
   }
 
   async openCalendar() {
@@ -142,7 +156,7 @@ export class InicioPage implements OnInit {
       component: IonDatetimeModalComponent,
       componentProps: {
         fechaSeleccionada: this.selectedDate,
-      }
+      },
     });
     await modal.present();
 
@@ -164,13 +178,15 @@ export class InicioPage implements OnInit {
   }
 
   cerrarSesion() {
-    this.afAuth.signOut().then(() => {
-      localStorage.removeItem('ingresado');
-      localStorage.removeItem('datosPersonales');
-      this.navCtrl.navigateRoot('login');
-    }).catch((error) => {
-      console.error('Error al cerrar sesión: ', error);
-    });
+    this.afAuth.signOut()
+      .then(() => {
+        localStorage.removeItem('ingresado');
+        localStorage.removeItem('datosPersonales');
+        this.navCtrl.navigateRoot('/login');
+      })
+      .catch((error) => {
+        console.error('Error al cerrar sesión:', error);
+      });
   }
 
   doRefresh(event: any) {
@@ -180,6 +196,6 @@ export class InicioPage implements OnInit {
     this.loadTodayClasses();
     setTimeout(() => {
       event.target.complete();
-    }, 1000);
-  }
+    }, 1000);
+  }
 }
