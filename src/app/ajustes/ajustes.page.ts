@@ -12,6 +12,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 })
 export class AjustesPage implements OnInit {
   paletteToggle = false; // Estado del tema oscuro
+  notificacionClase = false; // Estado del toggle "Próxima Clase"
+  notificacionAsistencia = false; // Estado del toggle "Registro Asistencia"
 
   constructor(
     private router: Router,
@@ -21,11 +23,19 @@ export class AjustesPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Leer preferencia del tema oscuro
     const storedThemePreference = localStorage.getItem('darkMode');
     if (storedThemePreference) {
       this.paletteToggle = JSON.parse(storedThemePreference);
       this.toggleDarkMode(this.paletteToggle);
     }
+
+    // Leer estados de las notificaciones
+    const storedNotificacionClase = localStorage.getItem('notificacionClase');
+    const storedNotificacionAsistencia = localStorage.getItem('notificacionAsistencia');
+
+    this.notificacionClase = storedNotificacionClase === 'true';
+    this.notificacionAsistencia = storedNotificacionAsistencia === 'true';
   }
 
   toggleChange(ev: any) {
@@ -39,6 +49,75 @@ export class AjustesPage implements OnInit {
       document.body.classList.add('dark');
     } else {
       document.body.classList.remove('dark');
+    }
+  }
+
+  toggleNotificacionProximaClase(isEnabled: boolean) {
+    this.notificacionClase = isEnabled;
+    localStorage.setItem('notificacionClase', JSON.stringify(isEnabled));
+
+    if (isEnabled) {
+      this.programarNotificacionProximaClase();
+    } else {
+      this.cancelarNotificacion(1); // ID 1 para "Próxima Clase"
+    }
+  }
+
+  toggleNotificacionRegistroAsistencia(isEnabled: boolean) {
+    this.notificacionAsistencia = isEnabled;
+    localStorage.setItem('notificacionAsistencia', JSON.stringify(isEnabled));
+
+    if (isEnabled) {
+      this.programarNotificacionRegistroAsistencia();
+    } else {
+      this.cancelarNotificacion(2); // ID 2 para "Registro Asistencia"
+    }
+  }
+
+  async programarNotificacionProximaClase() {
+    try {
+      await LocalNotifications.requestPermissions();
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 1,
+            title: 'Próxima Clase',
+            body: 'Recuerda tu clase programada.',
+            schedule: { at: new Date(new Date().getTime() + 5000) },
+          },
+        ],
+      });
+      console.log('Notificación de próxima clase programada');
+    } catch (error) {
+      console.error('Error al programar notificación:', error);
+    }
+  }
+
+  async programarNotificacionRegistroAsistencia() {
+    try {
+      await LocalNotifications.requestPermissions();
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 2,
+            title: 'Asistencia Registrada',
+            body: 'Se ha registrado tu asistencia correctamente.',
+            schedule: { at: new Date(new Date().getTime() + 5000) },
+          },
+        ],
+      });
+      console.log('Notificación de registro de asistencia programada');
+    } catch (error) {
+      console.error('Error al programar notificación:', error);
+    }
+  }
+
+  async cancelarNotificacion(notificationId: number) {
+    try {
+      await LocalNotifications.cancel({ notifications: [{ id: notificationId }] });
+      console.log(`Notificación con ID ${notificationId} cancelada`);
+    } catch (error) {
+      console.error('Error al cancelar notificación:', error);
     }
   }
 
@@ -105,44 +184,6 @@ export class AjustesPage implements OnInit {
         buttons: ['Aceptar'],
       });
       await alert.present();
-    }
-  }
-
-  async notificarProximaClase() {
-    try {
-      await LocalNotifications.requestPermissions();
-      await LocalNotifications.schedule({
-        notifications: [
-          {
-            id: 1,
-            title: 'Próxima Clase',
-            body: 'Recuerda tu clase programada.',
-            schedule: { at: new Date(new Date().getTime() + 5000) },
-          },
-        ],
-      });
-      console.log('Notificación de próxima clase programada');
-    } catch (error) {
-      console.error('Error al programar notificación:', error);
-    }
-  }
-
-  async notificarRegistroAsistencia() {
-    try {
-      await LocalNotifications.requestPermissions();
-      await LocalNotifications.schedule({
-        notifications: [
-          {
-            id: 2,
-            title: 'Asistencia Registrada',
-            body: 'Se ha registrado tu asistencia correctamente.',
-            schedule: { at: new Date(new Date().getTime() + 5000) },
-          },
-        ],
-      });
-      console.log('Notificación de registro de asistencia programada');
-    } catch (error) {
-      console.error('Error al programar notificación:', error);
     }
   }
 
