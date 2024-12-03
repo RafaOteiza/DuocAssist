@@ -1,8 +1,8 @@
-<!-- src/app/profesor-asignaturas/profesor-asignaturas.page.html -->
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Carga de Asignaturas</ion-title>
     <ion-buttons slot="end">
+      <!-- Botón para cerrar sesión con confirmación -->
       <ion-button (click)="cerrarSesion()">
         <ion-icon name="log-out-outline"></ion-icon>
         Cerrar Sesión
@@ -12,6 +12,7 @@
 </ion-header>
 
 <ion-content>
+  <!-- Lista de asignaturas del profesor -->
   <ion-list *ngIf="asignaturas.length > 0; else noAsignaturas">
     <ion-item *ngFor="let asignatura of asignaturas">
       <ion-label>
@@ -21,12 +22,14 @@
         <p><strong>Sección:</strong> {{ asignatura.seccion }}</p>
         <p><strong>Sala:</strong> {{ asignatura.sala }}</p>
       </ion-label>
+      <!-- Botón para generar QR -->
       <ion-button slot="end" color="primary" (click)="generarQR(asignatura)">
         Generar QR
       </ion-button>
     </ion-item>
   </ion-list>
 
+  <!-- Mensaje si no hay asignaturas -->
   <ng-template #noAsignaturas>
     <ion-card>
       <ion-card-content>
