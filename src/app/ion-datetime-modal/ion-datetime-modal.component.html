@@ -8,7 +8,14 @@
 </ion-header>
 
 <ion-content>
-  <ion-datetime [(ngModel)]="fechaSeleccionada" presentation="date" (ionChange)="onDateChange($event)"></ion-datetime>
+  <!-- Rango limitado de fechas en el ion-datetime -->
+  <ion-datetime
+    [(ngModel)]="fechaSeleccionada"
+    presentation="date"
+    (ionChange)="onDateChange($event)"
+    [min]="anioAcademicoActual + '-03-01'"
+    [max]="anioAcademicoActual + '-12-31'"
+  ></ion-datetime>
 
   <div *ngIf="asignaturasDelDia.length > 0">
     <ion-list>
