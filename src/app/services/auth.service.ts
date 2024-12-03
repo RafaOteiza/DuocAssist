@@ -16,6 +16,17 @@ export class AuthService {
         if (user) {
           localStorage.setItem('userToken', user.uid);
 
+          // Inicializar datos personales en el registro
+          const datosPersonales = {
+            nombre: '',
+            apellido: '',
+            telefono: '',
+            sexo: '',
+            carrera: '',
+            correo: email,
+          };
+          localStorage.setItem('datosPersonales', JSON.stringify(datosPersonales));
+
           if (email.endsWith('@profesor.duoc.cl')) {
             this.router.navigate(['/profesor-asignaturas']);
           } else {
@@ -35,6 +46,20 @@ export class AuthService {
         const uid = userCredential.user?.uid;
         if (uid) {
           localStorage.setItem('userToken', uid);
+
+          // Verificar si ya existen datos personales en localStorage
+          const datosPersonales = localStorage.getItem('datosPersonales');
+          if (!datosPersonales) {
+            const newDatosPersonales = {
+              nombre: '',
+              apellido: '',
+              telefono: '',
+              sexo: '',
+              carrera: '',
+              correo: email,
+            };
+            localStorage.setItem('datosPersonales', JSON.stringify(newDatosPersonales));
+          }
 
           if (email.endsWith('@profesor.duoc.cl')) {
             this.router.navigate(['/profesor-asignaturas']);
@@ -66,14 +91,15 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('datosPersonales');
-    
+    localStorage.removeItem('userToken'); // Solo elimina el token de autenticación
+    // localStorage.removeItem('datosPersonales'); // No elimines los datos personales
+
     return this.afAuth.signOut()
       .then(() => {
         this.router.navigate(['/login']);
       });
   }
+
 
   getAuthState() {
     return this.afAuth.authState;
