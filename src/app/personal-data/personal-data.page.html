@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/inicio"></ion-back-button> <!-- Botón para volver -->
+      <ion-back-button defaultHref="/inicio"></ion-back-button>
     </ion-buttons>
     <ion-title>Datos Personales</ion-title>
   </ion-toolbar>
@@ -22,7 +22,7 @@
 
       <ion-item>
         <ion-label position="floating">Correo</ion-label>
-        <ion-input [(ngModel)]="correo" name="correo" required type="email" disabled></ion-input>
+        <ion-input [value]="correo" name="correo" disabled></ion-input>
       </ion-item>
 
       <ion-item>
@@ -32,12 +32,9 @@
 
       <ion-item>
         <ion-label>Sexo</ion-label>
-        <ion-select [(ngModel)]="sexo" name="sexo" required>
-          <ion-select-option value="masculino">Masculino</ion-select-option>
-          <ion-select-option value="femenino">Femenino</ion-select-option>
-          <ion-select-option value="otro">Otro</ion-select-option>
-          <ion-select-option value="no-decidir">Prefiero no decir</ion-select-option>
-        </ion-select>
+        <ion-button expand="block" fill="outline" (click)="presentAlertSexo()" class="sexo-button">
+          {{ sexo ? sexo : 'Seleccionar' }}
+        </ion-button>
       </ion-item>
 
       <ion-item>
@@ -47,6 +44,13 @@
     </ion-list>
 
     <ion-button expand="block" type="submit">Guardar Datos</ion-button>
-    <ion-button expand="block" color="light" (click)="volverAlMenu()">Volver sin guardar</ion-button> <!-- Botón para volver sin guardar -->
+    <ion-button
+      expand="block"
+      class="volver-sin-guardar"
+      (click)="volverAlMenu()"
+      aria-label="Volver sin guardar"
+    >
+      Volver sin guardar
+    </ion-button>
   </form>
 </ion-content>

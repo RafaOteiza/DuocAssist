@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+import { AuthService } from '../services/auth.service'; // Servicio de autenticación para obtener el correo del usuario
 
 @Component({
   selector: 'app-personal-data',
@@ -9,46 +11,105 @@ import { Router } from '@angular/router';
 export class PersonalDataPage implements OnInit {
   nombre: string = '';
   apellido: string = '';
-  correo: string = '';
+  correo: string = ''; // Correo del usuario autenticado
   telefono: string = '';
   sexo: string = '';
   carrera: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private alertController: AlertController,
+    private authService: AuthService // Servicio para obtener información del usuario
+  ) {}
 
-  ngOnInit() {
-    // Cargar los datos personales desde localStorage si existen
+  async ngOnInit() {
+    // Obtener el correo del usuario autenticado y cargarlo
+    try {
+      const userEmail = await this.authService.getCurrentUserEmail(); // Método para obtener el correo
+      this.correo = userEmail || ''; // Mostrar correo del usuario si está disponible
+    } catch (error) {
+      console.error('Error al obtener el correo del usuario:', error);
+    }
+
+    // Cargar datos personales desde localStorage
     const datosPersonales = JSON.parse(localStorage.getItem('datosPersonales') || '{}');
     if (datosPersonales) {
       this.nombre = datosPersonales.nombre || '';
       this.apellido = datosPersonales.apellido || '';
-      this.correo = datosPersonales.correo || ''; // Asumimos que no se debe cambiar
       this.telefono = datosPersonales.telefono || '';
       this.sexo = datosPersonales.sexo || '';
       this.carrera = datosPersonales.carrera || '';
     }
   }
 
+  async presentAlertSexo() {
+    const alert = await this.alertController.create({
+      header: 'Seleccionar Sexo',
+      inputs: [
+        {
+          name: 'masculino',
+          type: 'radio',
+          label: 'Masculino',
+          value: 'Masculino',
+          checked: this.sexo === 'Masculino',
+        },
+        {
+          name: 'femenino',
+          type: 'radio',
+          label: 'Femenino',
+          value: 'Femenino',
+          checked: this.sexo === 'Femenino',
+        },
+        {
+          name: 'otro',
+          type: 'radio',
+          label: 'Otro',
+          value: 'Otro',
+          checked: this.sexo === 'Otro',
+        },
+        {
+          name: 'no-decidir',
+          type: 'radio',
+          label: 'Prefiero no decir',
+          value: 'Prefiero no decir',
+          checked: this.sexo === 'Prefiero no decir',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Aceptar',
+          handler: (selectedValue) => {
+            this.sexo = selectedValue;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   guardarDatosPersonales() {
-    // Guardar los datos personales en localStorage
     const datosPersonales = {
       nombre: this.nombre,
       apellido: this.apellido,
-      correo: this.correo,
       telefono: this.telefono,
       sexo: this.sexo,
       carrera: this.carrera,
     };
 
+    // Guardar en localStorage
     localStorage.setItem('datosPersonales', JSON.stringify(datosPersonales));
     console.log('Datos personales guardados:', datosPersonales);
 
-    // Redirigir al inicio o cualquier otra vista después de guardar
+    // Navegar de vuelta al inicio
     this.router.navigate(['/inicio']);
   }
 
   volverAlMenu() {
-    // Redirigir al menú principal sin guardar
     this.router.navigate(['/inicio']);
   }
 }

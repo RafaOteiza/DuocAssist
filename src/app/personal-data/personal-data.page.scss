@@ -1,0 +1,16 @@
+.sexo-button {
+    --border-radius: 10px;
+    --border-color: var(--ion-color-primary);
+    --color: var(--ion-text-color);
+    --background: var(--ion-background-color);
+  }
+  
+  ion-alert {
+    --color: var(--ion-text-color); /* Texto del alert */
+    --background: var(--ion-background-color); /* Fondo del alert */
+  }
+  
+  ion-alert-button {
+    --color: var(--ion-color-primary); /* Botón de aceptar y cancelar */
+  }
+  
