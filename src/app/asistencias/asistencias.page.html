@@ -8,21 +8,25 @@
 </ion-header>
 
 <ion-content>
+  <!-- Lista de asistencias -->
   <ion-list *ngIf="asistencias.length > 0; else noAsistencias">
     <ion-item *ngFor="let asistencia of asistencias">
       <ion-label>
-        <h2>{{ asistencia.asignatura }}</h2>
-        <p><strong>Sección:</strong> {{ asistencia.seccion }}</p>
-        <p><strong>Sala:</strong> {{ asistencia.sala }}</p>
-        <p><strong>Fecha Escaneo:</strong> {{ asistencia.fechaEscaneo.toDate() | date:'short' }}</p>
+          <h2>{{ asistencia.nombreAsignatura }}</h2>
+          <p><strong>Sigla:</strong> {{ asistencia.sigla }}</p>
+          <p><strong>Sección:</strong> {{ asistencia.seccion }}</p>
+          <p><strong>Sala:</strong> {{ asistencia.sala }}</p>
+          <p><strong>Fecha Escaneo:</strong> {{ asistencia.fechaEscaneo.toDate() | date: 'dd-MM-yyyy, HH:mm' }}</p>
       </ion-label>
-    </ion-item>
+  </ion-item>
+  
   </ion-list>
 
+  <!-- Mensaje para cuando no hay asistencias -->
   <ng-template #noAsistencias>
     <ion-card>
       <ion-card-content>
-        <p>No hay registros de asistencia.</p>
+        <p style="text-align: center;">No hay registros de asistencia.</p>
       </ion-card-content>
     </ion-card>
   </ng-template>
