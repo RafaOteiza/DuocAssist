@@ -37,7 +37,8 @@
 }
 
 /* Estilos globales */
-html, body {
+html,
+body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--ion-background-color);
   color: var(--ion-text-color);
@@ -74,6 +75,12 @@ ion-button {
   --background: var(--ion-color-primary);
   --color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.volver-sin-guardar {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+  border: 1px solid var(--ion-color-medium);
 }
 
 /* Contenedor de QR centrado */
@@ -179,8 +186,8 @@ body.scanner-active .qr-button-container {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
-  display: flex !important;
+  background-color: rgba(0, 0, 0, 0.8); /* Fondo semitransparente */
+  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -188,13 +195,12 @@ body.scanner-active .qr-button-container {
 
 .scan-overlay::before {
   content: '';
-  width: 80%;
-  height: 40%;
-  border: 4px solid #6200ee; /* Bordes morados */
+  width: 70%;
+  height: 35%;
+  border: 4px solid #ffffff; /* Color de los bordes */
+  border-radius: 12px; /* Bordes redondeados */
   box-sizing: border-box;
-  border-radius: 8px; /* Si deseas esquinas redondeadas */
-  position: absolute;
-  background-color: transparent !important; /* Asegura que sea completamente transparente */
+  background-color: transparent !important;
 }
 
 /* Modo oscuro */
@@ -220,7 +226,7 @@ body.scanner-active .qr-button-container {
   }
 
   ion-header {
-    background: linear-gradient(135deg, #6200ee, #3700b3); /* Gradiente morado oscuro */
+    background: linear-gradient(135deg, #6200ee, #3700b3);
     color: var(--ion-text-color);
   }
 
@@ -229,7 +235,55 @@ body.scanner-active .qr-button-container {
     color: var(--ion-text-color);
   }
 
+  ion-back-button.volver-sin-guardar {
+    color: var(--ion-text-color);
+  }
+
   ion-item {
     --color: var(--ion-color-dark);
   }
+
+  ion-icon {
+    color: var(--ion-text-color);
+  }
+
+  ion-button.volver-sin-guardar {
+    --color: var(--ion-text-color);
+  }
+
+  /* Estilos para ion-alert en modo oscuro */
+  ion-alert {
+    --color: #ffffff;
+    --background: #333333;
+    --button-color: #bb86fc;
+  }
+
+  ion-alert-button {
+    --color: #bb86fc;
+  }
+
+  /* Ajustes específicos para las etiquetas de opciones dentro del ion-alert */
+ion-alert .alert-radio-label {
+  color: #ffffff !important; /* Asegura texto blanco en modo oscuro */
+  font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
 }
+
+.dark ion-alert .alert-radio-label {
+  color: #ffffff !important; /* Forzar texto blanco en modo oscuro */
+}
+
+ion-alert .alert-radio-icon {
+  --color: #bb86fc; /* Icono del radio button en color morado */
+}
+
+.dark ion-alert .alert-radio-icon {
+  --color: #bb86fc; /* Asegura el mismo color para el icono en modo oscuro */
+}
+
+}
+
+.custom-loading-class .loading-wrapper {
+  bottom: 120px; /* Ajusta según la posición deseada */
+  position: absolute;
+}
+
